@@ -8,14 +8,6 @@ import { ProductEntity } from './entities/product.entity';
 export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateProductDto): Promise<ProductEntity | null> {
-    if (data.categoryId) {
-      const exist = await this.prisma.category.findUnique({
-        where: { id: data.categoryId },
-      });
-      if (!exist) {
-        throw new Error('this category doest not exist');
-      }
-    }
     const product = await this.prisma.product.create({ data });
 
     return new ProductEntity(product);
@@ -26,35 +18,20 @@ export class ProductService {
       select: {
         id: true,
         name: true,
-        kg: true,
-        price: true,
-        category: {
-          select: {
-            name: true,
-          },
-        },
       },
     });
     return products;
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const product = await this.prisma.product.findUnique({ where: { id } });
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     const exist = await this.prisma.product.findUnique({ where: { id } });
     if (!exist) {
       throw new Error('this product doest not exist');
-    }
-    if (updateProductDto.categoryId) {
-      const exist = await this.prisma.category.findUnique({
-        where: { id: updateProductDto.categoryId },
-      });
-      if (!exist) {
-        throw new Error('this category doest not exist');
-      }
     }
     const product = await this.prisma.product.update({
       where: { id },
@@ -63,7 +40,7 @@ export class ProductService {
     return product;
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const exist = await this.prisma.product.findUnique({ where: { id } });
     if (!exist) {
       throw new Error('this product doest not exist');

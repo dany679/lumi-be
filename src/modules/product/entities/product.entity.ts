@@ -1,14 +1,8 @@
 import { Exclude } from 'class-transformer';
 
 export class ProductEntity {
-  id: string;
+  id: number;
   name: string;
-  price: number;
-  kg: number;
-  description: string;
-  image: string;
-  categoryId?: string;
-
   @Exclude()
   created_at: Date;
   @Exclude()

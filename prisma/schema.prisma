@@ -6,48 +6,48 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Product {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  price       Float
-  kg          Float?
-  description String
-  image       String
-  Menu        Menu?     @relation(fields: [menuId], references: [id])
-  category    Category? @relation(fields: [categoryId], references: [id])
-  menuId      String?   @db.ObjectId
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  categoryId  String?   @db.ObjectId
+  id              Int               @id @default(autoincrement())
+  name            String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  DemandsProducts DemandsProducts[]
 
   @@map("products")
 }
 
-model Category {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  Product    Product[]
+model DemandsProducts {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  demandId   Int
+  total_plan Int
+  total_prod Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Product    Product  @relation(fields: [productId], references: [id])
+  Demand     Demand?  @relation(fields: [demandId], references: [id])
 
-  @@map("categories")
+  @@map("demands_products")
 }
 
-model Menu {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  menuTime   MenuTime  @unique
-  products   Product[]
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+model Demand {
+  id              Int               @id @default(autoincrement())
+  status          String            @default("EM ANDAMENTO")
+  DemandsProducts DemandsProducts[]
+  start_at        DateTime          @updatedAt
+  finish_at       DateTime          @updatedAt
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
 
-  @@map("menus")
+  @@map("demands")
 }
 
-enum MenuTime {
-  DAY
-  NIGHT
-}
+// enum Status {
+//   ANDAMENTO
+//   PLANEJAMENTO
+//   CONCLUIDO
+// }
