@@ -56,7 +56,6 @@ export class DemandService {
   }
 
   async update(id: number, data: UpdateDemandDto) {
-    console.log(data, 'DATA');
     const exist = await this.prisma.demand.update({ where: { id }, data });
 
     if (!exist) {
