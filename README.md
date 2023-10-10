@@ -1,12 +1,47 @@
-Qual foi a maior dificuldade que você enfrentou ao realizar o teste?
 
-Fiquei com muita duvida no significado de categorias, se seria one-to-many or many-to-many
+## 🚀 Tecnologias
 
-• Descreva a funcionalidade e o por quê da utilização das bibliotecas
-escolhidas por você para concluir o desafio.
+- Tailwind design
+- Tailwind animations and effects
+- form-hooks
+- How to reuse layouts
+- Folder structure in Next 13 App Router
 
-Class-validator ela basicamente simplifica toda a dificuldade geralmente agregada a verificação de alguns dados como o Id do params ou se o id é mongoId se o item deve ser excluido ou exposto.
+### Prerequisites
 
-• Como você se vê daqui a 5 anos?
+**Node version 18.x.x**
 
-Como senior developer , trabalhando no frame mais atual com ts o que acredito que dificilmente alguem ira tirar a coroa do next para o front, ensinando os mais novos ingressados e com um base de conhecimento ainda maior. alem de que uma agua de coco e morar em uma cidade que somente algumas horas de um mar.
+## Licença
+
+MIT
+
+## How To Run
+
+### Install packages
+
+
+### Start the app
+
+```shell
+yarn  
+```
+
+### start
+
+```shell
+$ yarn start
+
+```
+
+```shell
+yarn
+```
+
+### Setup .env file
+
+como estou usando db sqlite em vez de cacular o cont no back tive que enviar para calcular no front ja que o prisma sqlite gera um erro de big int
+
+```shell
+npx prisma db push
+
+```
