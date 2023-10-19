@@ -47,8 +47,25 @@ model Demand {
   @@map("demands")
 }
 
+model User {
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String    @unique
+  emailVerified  DateTime?
+  provider       String    @default("EMAIL")
+  hashedPassword String?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@map("users")
+}
+
 // enum Status {
 //   ANDAMENTO
 //   PLANEJAMENTO
 //   CONCLUIDO
+// }
+// enum Providers {
+//   EMAIL
+//   GITHUB
 // }
