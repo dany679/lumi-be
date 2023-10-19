@@ -7,8 +7,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
-import { idDTO } from 'src/utils/dto';
+import { IPagination, PaginationDTO, idDTO } from 'src/utils/dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
@@ -28,8 +29,10 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Query() queryPagination: IPagination) {
+    const pagination = new PaginationDTO(queryPagination);
+
+    return this.productService.findAll(pagination);
   }
 
   @Get(':id')

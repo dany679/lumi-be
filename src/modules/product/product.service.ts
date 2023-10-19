@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
+import { PaginationDTO } from 'src/utils/dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
@@ -13,18 +14,25 @@ export class ProductService {
     return new ProductEntity(product);
   }
 
-  async findAll() {
+  async findAll(pagination: PaginationDTO) {
     const products = await this.prisma.product.findMany({
       select: {
         id: true,
         name: true,
       },
+      skip: pagination.skip,
+      take: pagination.limit,
     });
-    return products;
+    const count = await this.prisma.product.count();
+    pagination.count = count;
+    return { products, pagination };
   }
 
   async findOne(id: number) {
     const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) {
+      throw new Error('this product doest not exist');
+    }
     return product;
   }
 
