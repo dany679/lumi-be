@@ -15,3 +15,10 @@ export type userToken = {
   email: string;
   provider: string;
 };
+
+export type userAuth = {
+  id: number;
+  email: string;
+  provider: string;
+  refreshToken: string;
+};

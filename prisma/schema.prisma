@@ -52,6 +52,7 @@ model User {
   name           String
   email          String    @unique
   emailVerified  DateTime?
+  refreshToken   String?
   provider       String    @default("EMAIL")
   hashedPassword String?
   created_at     DateTime  @default(now())

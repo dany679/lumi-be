@@ -23,6 +23,7 @@ export class DemandController {
     return this.demandService.create(createDemandDto);
   }
 
+  // @UseGuards(AccessTokenGuard)
   @Get()
   findAll(@Query() queryPagination: IPagination) {
     const pagination = new PaginationDTO(queryPagination);
