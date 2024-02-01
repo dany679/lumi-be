@@ -35,9 +35,10 @@ yarn
 
 ### Setup .env file
 
-como estou usando db sqlite em vez de cacular o cont no back tive que enviar para calcular no front ja que o prisma sqlite gera um erro de big int
+como estou usando db prisma lembre de usar o generate
 
 ```shell
+npx prisma generate
 npx prisma db push
 
 ```
