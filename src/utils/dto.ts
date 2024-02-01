@@ -1,10 +1,21 @@
 /* eslint-disable prettier/prettier */
-import { IsInt, IsNumberString, IsPositive } from 'class-validator';
+import {
+  IsInt,
+  IsNumberString,
+  IsPositive,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class idDTO {
   @IsPositive()
   @IsInt()
   id: number;
+}
+export class uuidDTO {
+  @IsUUID()
+  @IsString()
+  id: string;
 }
 
 export class PaginationDTO {
@@ -19,6 +30,8 @@ export class PaginationDTO {
 
   skip: number;
   count = 0;
+  // prev: number | null;
+  next: boolean;
 
   constructor(data: IPagination) {
     this.page = data.page ? convertToIntegerAbs(data.page) : 1;

@@ -1,11 +1,8 @@
-
 ## 🚀 Tecnologias
 
-- Tailwind design
-- Tailwind animations and effects
-- form-hooks
-- How to reuse layouts
-- Folder structure in Next 13 App Router
+- Nest
+- Prisma
+- PostgreSQL
 
 ### Prerequisites
 
@@ -19,11 +16,10 @@ MIT
 
 ### Install packages
 
-
 ### Start the app
 
 ```shell
-yarn  
+yarn
 ```
 
 ### start

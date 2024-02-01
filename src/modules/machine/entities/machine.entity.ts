@@ -1,14 +1,15 @@
 import { Exclude } from 'class-transformer';
 
-export class ProductEntity {
-  id: number;
+export class MachineEntity {
+  id: string;
   name: string;
+  type: string;
   @Exclude()
   created_at: Date;
   @Exclude()
   updated_at: Date;
 
-  constructor(partial: Partial<ProductEntity>) {
+  constructor(partial: Partial<MachineEntity>) {
     Object.assign(this, partial);
   }
 }

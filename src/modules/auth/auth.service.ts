@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -8,6 +10,7 @@ import { AuthDto } from './dto/auth.dto';
 // import { JwtService } from '@nestjs/jwt';
 // import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { UserHttpStatus } from 'src/utils/erros/user.error';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { jwtConstants } from './constants';
@@ -29,7 +32,10 @@ export class AuthService {
     const { password, ...user } = createUserDto;
     const userExists = await this.userService.findByEmail(createUserDto.email);
     if (userExists) {
-      throw new BadRequestException('User already exists');
+      throw new HttpException(
+        UserHttpStatus.CONFLICT_ALREADY_EXIST,
+        HttpStatus.CONFLICT,
+      );
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.userService.create({
@@ -77,7 +83,7 @@ export class AuthService {
         {
           secret: jwtConstants.access,
           // secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '15m',
+          expiresIn: '1d',
         },
       ),
       this.jwtService.signAsync(

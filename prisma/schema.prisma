@@ -7,44 +7,33 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Product {
-  id              Int               @id @default(autoincrement())
-  name            String
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-  DemandsProducts DemandsProducts[]
+model Machine {
+  id           String        @id @default(uuid())
+  name         String
+  type         String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  acessPointId String?
+  AcessPoint   AccessPoint[]
 
-  @@map("products")
+  @@map("machines")
 }
 
-model DemandsProducts {
-  id         Int      @id @default(autoincrement())
-  productId  Int
-  demandId   Int
-  total_plan Int
-  total_prod Int      @default(0)
+model AccessPoint {
+  id         String   @id @default(uuid())
+  name       String
+  sensor     String
+  sensorID   String   @unique
+  Machine    Machine  @relation(fields: [machineId], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  Product    Product  @relation(fields: [productId], references: [id])
-  Demand     Demand?  @relation(fields: [demandId], references: [id])
+  machineId  String
 
-  @@map("demands_products")
-}
-
-model Demand {
-  id              Int               @id @default(autoincrement())
-  status          String            @default("EM ANDAMENTO")
-  DemandsProducts DemandsProducts[]
-  start_at        DateTime          @updatedAt
-  finish_at       DateTime          @updatedAt
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-
-  @@map("demands")
+  @@map("access_point")
 }
 
 model User {
@@ -60,13 +49,3 @@ model User {
 
   @@map("users")
 }
-
-// enum Status {
-//   ANDAMENTO
-//   PLANEJAMENTO
-//   CONCLUIDO
-// }
-// enum Providers {
-//   EMAIL
-//   GITHUB
-// }
