@@ -8,7 +8,6 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateUserAuthDto) {
-    console.log(data, 'AAAAAAAAAAAAAAAAAAAAA');
     return await this.prisma.user.create({ data });
   }
 
