@@ -17,6 +17,6 @@ async function bootstrap() {
   );
   const reflector = new Reflector();
   app.useGlobalGuards(new AccessTokenGuard(reflector));
-  await app.listen(8080);
+  await app.listen(process.env.PORT, '0.0.0.0');
 }
 bootstrap();
