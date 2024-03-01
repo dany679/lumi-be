@@ -7,14 +7,14 @@ import { JwtAuthGuard } from './utils/guard/jwt-auth.guard';
 @Controller('hello')
 export class AppController {
   constructor(private readonly appService: AppService) {}
-  @UseGuards(JwtAuthGuard)
+  @Public()
   @Get()
   getHello(@GetCurrentUserById() id: number): string {
     console.log(id);
     return this.appService.getHello();
   }
-  @Public()
-  @Get()
+  @UseGuards(JwtAuthGuard)
+  @Get('/auth')
   getHelloAuth(@GetCurrentUserById() id: number): string {
     console.log(id);
     return this.appService.getHello();
