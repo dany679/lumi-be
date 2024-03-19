@@ -1,13 +1,33 @@
+FROM node:18-alpine as builder
 
-FROM node:18-alpine3.16
-WORKDIR /nextD
+ENV NODE_ENV build
 
-COPY package.json  .
+# USER node
+WORKDIR /home/node
 
-# ARG DATABASE_URL=file:./dev.db
-RUN yarn install
+COPY package*.json ./
+RUN  npm install --package-lock-only
+RUN npm ci
 
-COPY . .
-RUN yarn build
-# EXPOSE 8080
-CMD ["yarn", "start"]
+COPY --chown=node:node . .
+RUN npx prisma generate \
+    && npm run build \
+    && npm prune --omit=dev
+
+# ---
+
+FROM node:18-alpine
+
+ENV NODE_ENV production
+ENV DATABASE_URL="postgres://dynamox:XvoO2xqWdOLeYfVVW7LWLwQmdUqGUKtj@dpg-cmq2gs7109ks73f9okhg-a.ohio-postgres.render.com/dynamox_erql"
+ENV PORT=8080
+ENV APP_ENV="production"
+
+# USER node
+WORKDIR /home/node
+
+COPY --from=builder --chown=node:node /home/node/package*.json ./
+COPY --from=builder --chown=node:node /home/node/node_modules/ ./node_modules/
+COPY --from=builder --chown=node:node /home/node/dist/ ./dist/
+
+CMD ["node", "dist/main.js"]
