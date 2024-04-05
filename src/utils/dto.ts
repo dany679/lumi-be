@@ -44,6 +44,17 @@ const convertToIntegerAbs = (string: string | number) => {
   return numberIs > 1 ? numberIs : 1;
 };
 export interface IPagination {
-  limit?: number;
-  page?: number;
+  limit: number;
+  skip: number;
+  page: number;
+  count?: number;
+  next?: boolean;
+}
+export interface IPaginationPage {
+  userId: string;
+  limit: number;
+  skip: number;
+  page: number;
+  count?: number;
+  next?: boolean;
 }

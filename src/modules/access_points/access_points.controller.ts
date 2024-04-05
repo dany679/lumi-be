@@ -8,15 +8,13 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { uuidDTO } from 'src/utils/dto';
-import {
-  IPaginationSensor,
-  SensorPaginationDTO,
-} from 'src/utils/sensorPaginationDTO';
+import { GetCurrentUserByIdAndPaginationSensor } from 'src/utils/guard/get-user-by-id-paginationSensor.decorator';
+import { GetCurrentUserById } from 'src/utils/guard/get-user-by-id.decorator';
+import { IPaginationSensor } from 'src/utils/sensorPaginationDTO';
 import { AccessPointsService } from './access_points.service';
-import { CreateAccessPoints } from './dto/create-access_points.dto';
+import { CreateAccessPointsBody } from './dto/create-access_points.dto';
 import { UpdateAccessPoints } from './dto/update-access_points.dto';
 import { AccessPointsEntity } from './entities/access_points.entity';
 
@@ -27,23 +25,24 @@ export class AccessPointsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body() createProductDto: CreateAccessPoints,
+    @GetCurrentUserById() id: string,
+    @Body() createProductDto: CreateAccessPointsBody,
   ): Promise<AccessPointsEntity | null> {
     return new AccessPointsEntity(
-      await this.accessPointService.create(createProductDto),
+      await this.accessPointService.create({ ...createProductDto, userId: id }),
     );
   }
 
   @Get()
-  findAll(@Query() queryPagination: IPaginationSensor) {
-    const pagination = new SensorPaginationDTO(queryPagination);
-
-    return this.accessPointService.findAll(pagination);
+  findAll(
+    @GetCurrentUserByIdAndPaginationSensor() pagination: IPaginationSensor,
+  ) {
+    return this.accessPointService.findAll(pagination as IPaginationSensor);
   }
 
   @Get(':id')
-  findOne(@Param() { id }: uuidDTO) {
-    return this.accessPointService.findOne(id);
+  findOne(@Param() { id }: uuidDTO, @GetCurrentUserById() userId: string) {
+    return this.accessPointService.findOne(userId, id);
   }
 
   @HttpCode(201)
@@ -51,13 +50,14 @@ export class AccessPointsController {
   update(
     @Param() { id }: uuidDTO,
     @Body() updateProductDto: UpdateAccessPoints,
+    @GetCurrentUserById() userId: string,
   ) {
-    return this.accessPointService.update(id, updateProductDto);
+    return this.accessPointService.update(userId, id, updateProductDto);
   }
 
   @HttpCode(204)
   @Delete(':id')
-  remove(@Param() { id }: uuidDTO) {
-    return this.accessPointService.remove(id);
+  remove(@Param() { id }: uuidDTO, @GetCurrentUserById() userId: string) {
+    return this.accessPointService.remove(userId, id);
   }
 }

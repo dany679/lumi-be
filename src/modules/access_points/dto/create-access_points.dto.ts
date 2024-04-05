@@ -1,8 +1,13 @@
 import { IsIn, IsString, IsUUID } from 'class-validator';
-const sensorIn = ['TcAg', 'TcAs', 'HF+'] as const;
-export type sensorType = (typeof sensorIn)[number];
+const states = [
+  'AGUARDANDO',
+  'EM ANDAMENTO',
+  'PLANEJAMENTO',
+  'CONCLUIDO',
+] as const;
+export type stateType = (typeof states)[number];
 
-export class CreateAccessPoints {
+export class CreateAccessPointsBody {
   @IsString()
   name: string;
 
@@ -10,8 +15,13 @@ export class CreateAccessPoints {
   machineId: string;
 
   @IsString()
-  sensorID: string;
+  serialID: string;
 
-  @IsIn(sensorIn)
-  sensor: sensorType;
+  @IsIn(states)
+  state: stateType;
+}
+
+export class CreateAccessPoints extends CreateAccessPointsBody {
+  @IsUUID()
+  userId: string;
 }

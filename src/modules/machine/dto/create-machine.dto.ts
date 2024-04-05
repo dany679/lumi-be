@@ -1,10 +1,14 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
-export class CreateMachineDto {
+export class CreateMachineBodyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
   @IsString()
   @IsNotEmpty()
   type: string;
+}
+export class CreateMachineDto extends CreateMachineBodyDto {
+  @IsUUID()
+  userId: string;
 }

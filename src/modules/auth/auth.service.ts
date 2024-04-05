@@ -64,16 +64,16 @@ export class AuthService {
     const userAuth = { name: user.name, email: user.email, id: user.id };
     return { tokens, user: userAuth };
   }
-  async logout(userId: number) {
+  async logout(userId: string) {
     return this.userService.update(userId, { refreshToken: null });
   }
-  async updateRefreshToken(userId: number, refreshToken: string) {
+  async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = await this.bcryptHash(refreshToken);
     await this.userService.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }
-  async getTokens(userId: number, username: string) {
+  async getTokens(userId: string, username: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -83,7 +83,7 @@ export class AuthService {
         {
           secret: jwtConstants.access,
           // secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '1d',
+          expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
@@ -105,7 +105,7 @@ export class AuthService {
       refreshToken,
     };
   }
-  async refreshTokens(userId: number, refreshToken: string) {
+  async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.userService.findOne(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException('Access Denied');

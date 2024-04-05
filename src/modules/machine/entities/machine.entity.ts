@@ -4,6 +4,7 @@ export class MachineEntity {
   id: string;
   name: string;
   type: string;
+  userId: string;
   @Exclude()
   created_at: Date;
   @Exclude()

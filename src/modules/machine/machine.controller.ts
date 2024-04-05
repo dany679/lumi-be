@@ -8,10 +8,11 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
-import { IPagination, PaginationDTO, uuidDTO } from 'src/utils/dto';
-import { CreateMachineDto } from './dto/create-machine.dto';
+import { IPaginationPage, uuidDTO } from 'src/utils/dto';
+import { GetCurrentUserByIdAndPagination } from 'src/utils/guard/get-user-by-id-pagination.decorator';
+import { GetCurrentUserById } from 'src/utils/guard/get-user-by-id.decorator';
+import { CreateMachineBodyDto } from './dto/create-machine.dto';
 import { UpdateProductDto } from './dto/update-machine.dto';
 import { MachineEntity } from './entities/machine.entity';
 import { MachineService } from './machine.service';
@@ -23,34 +24,38 @@ export class MachineController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @Body() createProductDto: CreateMachineDto,
+    @GetCurrentUserById() id: string,
+    @Body() createProductDto: CreateMachineBodyDto,
   ): Promise<MachineEntity | null> {
+    // console.log(id);
     return new MachineEntity(
-      await this.machineService.create(createProductDto),
+      await this.machineService.create({ userId: id, ...createProductDto }),
     );
   }
 
   @Get()
-  findAll(@Query() queryPagination: IPagination) {
-    const pagination = new PaginationDTO(queryPagination);
-
-    return this.machineService.findAll(pagination);
+  findAll(@GetCurrentUserByIdAndPagination() queryPagination: IPaginationPage) {
+    return this.machineService.findAll(queryPagination as IPaginationPage);
   }
 
   @Get(':id')
-  findOne(@Param() { id }: uuidDTO) {
-    return this.machineService.findOne(id);
+  findOne(@Param() { id }: uuidDTO, @GetCurrentUserById() userId: string) {
+    return this.machineService.findOne(userId, id);
   }
 
   @HttpCode(201)
   @Put(':id')
-  update(@Param() { id }: uuidDTO, @Body() updateProductDto: UpdateProductDto) {
-    return this.machineService.update(id, updateProductDto);
+  update(
+    @Param() { id }: uuidDTO,
+    @Body() updateProductDto: UpdateProductDto,
+    @GetCurrentUserById() userId: string,
+  ) {
+    return this.machineService.update(userId, id, updateProductDto);
   }
 
   @HttpCode(204)
   @Delete(':id')
-  remove(@Param() { id }: uuidDTO) {
-    return this.machineService.remove(id);
+  remove(@Param() { id }: uuidDTO, @GetCurrentUserById() userId: string) {
+    return this.machineService.remove(userId, id);
   }
 }
