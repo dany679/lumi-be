@@ -32,7 +32,7 @@ export class AuthController {
   }
   @UseGuards(AccessTokenGuard)
   @Get('logout')
-  logout(@GetCurrentUserById() id: number) {
+  logout(@GetCurrentUserById() id: string) {
     console.log(id);
     this.authService.logout(id);
   }

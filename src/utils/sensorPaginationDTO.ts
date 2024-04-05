@@ -6,15 +6,21 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { IPagination, PaginationDTO } from './dto';
+import { PaginationDTO } from './dto';
 
-const sensorIn = ['TcAg', 'TcAs', 'HF+'] as const;
-export type sensorType = (typeof sensorIn)[number];
-export interface IPaginationSensor extends IPagination {
-  name?: string;
-  machineId?: string;
-  sensorID?: string;
-  sensor?: string;
+const states = [
+  'AGUARDANDO',
+  'EM ANDAMENTO',
+  'PLANEJAMENTO',
+  'CONCLUIDO',
+] as const;
+export type statesType = (typeof states)[number];
+export interface IPaginationSensor extends PaginationDTO {
+  name: string;
+  machineId: string;
+  serialID: string;
+  state: string;
+  userId: string;
 }
 export class idDTO {
   @IsPositive()
@@ -38,17 +44,18 @@ export class SensorPaginationDTO extends PaginationDTO {
 
   @IsOptional()
   @IsString()
-  sensorID: string;
+  serialID: string;
 
   @IsOptional()
   @IsString()
-  sensor: string;
+  state: string;
 
   constructor(data: IPaginationSensor) {
     super(data);
     this.name = data.name || '';
     this.machineId = data.machineId || '';
-    this.sensorID = data.sensorID || '';
-    this.sensor = data.sensor || undefined;
+    this.serialID = data.serialID || '';
+    this.state = data.state || undefined;
   }
 }
+export type paginationSensorType = typeof SensorPaginationDTO;

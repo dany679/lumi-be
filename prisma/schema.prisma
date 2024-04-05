@@ -12,13 +12,14 @@ datasource db {
 }
 
 model Machine {
-  id           String        @id @default(uuid())
-  name         String
-  type         String
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt
-  acessPointId String?
-  AcessPoint   AccessPoint[]
+  id         String        @id @default(uuid())
+  name       String
+  type       String
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  AcessPoint AccessPoint[]
+  User       User          @relation(fields: [userId], references: [id])
+  userId     String // relation scalar field  (used in the `@relation` attribute above)
 
   @@map("machines")
 }
@@ -26,26 +27,30 @@ model Machine {
 model AccessPoint {
   id         String   @id @default(uuid())
   name       String
-  sensor     String
-  sensorID   String   @unique
+  state      String
+  serialID   String   @unique
   Machine    Machine  @relation(fields: [machineId], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   machineId  String
+  User       User     @relation(fields: [userId], references: [id])
+  userId     String // relation scalar field  (used in the `@relation` attribute above)
 
   @@map("access_point")
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
+  id             String        @id @default(uuid())
   name           String
-  email          String    @unique
+  email          String        @unique
   emailVerified  DateTime?
   refreshToken   String?
-  provider       String    @default("EMAIL")
+  provider       String        @default("EMAIL")
   hashedPassword String?
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  Machine        Machine[]
+  AccessPoint    AccessPoint[]
 
   @@map("users")
 }

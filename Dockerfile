@@ -19,7 +19,7 @@ RUN npx prisma generate \
 FROM node:18-alpine
 
 ENV NODE_ENV production
-ENV DATABASE_URL="postgres://dynamox:XvoO2xqWdOLeYfVVW7LWLwQmdUqGUKtj@dpg-cmq2gs7109ks73f9okhg-a.ohio-postgres.render.com/dynamox_erql"
+ENV DATABASE_URL="postgres://company_dasn_user:IPw4WgJgCsWuUGPz0ty8op41F1w7eI3R@dpg-co1ffeq1hbls73a39etg-a.oregon-postgres.render.com/company_dasn"
 ENV PORT=8080
 ENV APP_ENV="production"
 

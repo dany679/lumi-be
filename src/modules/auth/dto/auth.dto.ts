@@ -11,13 +11,13 @@ export class AuthDto {
 }
 
 export type userToken = {
-  id: number;
+  id: string;
   email: string;
   provider: string;
 };
 
 export type userAuth = {
-  id: number;
+  id: string;
   email: string;
   provider: string;
   refreshToken: string;

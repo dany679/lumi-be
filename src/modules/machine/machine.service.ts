@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { PaginationDTO } from 'src/utils/dto';
+import { IPaginationPage } from 'src/utils/dto';
 import { MachineHttpStatus } from 'src/utils/erros/machines.enum.error';
 import { CreateMachineDto } from './dto/create-machine.dto';
 import { UpdateProductDto } from './dto/update-machine.dto';
@@ -15,8 +15,9 @@ export class MachineService {
     return new MachineEntity(machine);
   }
 
-  async findAll(pagination: PaginationDTO) {
+  async findAll(pagination: IPaginationPage) {
     const machines = await this.prisma.machine.findMany({
+      where: { userId: pagination.userId },
       select: {
         id: true,
         name: true,
@@ -34,7 +35,7 @@ export class MachineService {
     return { machines, pagination };
   }
 
-  async findOne(id: string) {
+  async findOne(userId: string, id: string) {
     const machine = await this.prisma.machine.findUnique({ where: { id } });
     if (!machine) {
       throw new HttpException(
@@ -42,15 +43,27 @@ export class MachineService {
         HttpStatus.NOT_FOUND,
       );
     }
+    if (machine.userId !== userId) {
+      throw new HttpException(
+        MachineHttpStatus.NOT_ALLOW,
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
     return machine;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(userId: string, id: string, updateProductDto: UpdateProductDto) {
     const exist = await this.prisma.machine.findUnique({ where: { id } });
     if (!exist) {
       throw new HttpException(
         MachineHttpStatus.NOT_FOUND,
         HttpStatus.NOT_FOUND,
+      );
+    }
+    if (exist.userId !== userId) {
+      throw new HttpException(
+        MachineHttpStatus.NOT_ALLOW,
+        HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
     const machine = await this.prisma.machine.update({
@@ -60,7 +73,7 @@ export class MachineService {
     return machine;
   }
 
-  async remove(id: string) {
+  async remove(userId: string, id: string) {
     const exist = await this.prisma.machine.findUnique({ where: { id } });
     const conflictAc = await this.prisma.accessPoint.findFirst({
       where: { machineId: id },
@@ -68,6 +81,12 @@ export class MachineService {
     if (!exist) {
       throw new HttpException(
         MachineHttpStatus.NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (exist.userId !== userId) {
+      throw new HttpException(
+        MachineHttpStatus.NOT_ALLOW,
         HttpStatus.NOT_FOUND,
       );
     }

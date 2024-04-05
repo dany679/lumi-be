@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { AccessPointsHttpStatus } from 'src/utils/erros/access_points.error';
-import { SensorPaginationDTO } from 'src/utils/sensorPaginationDTO';
+import { IPaginationSensor } from 'src/utils/sensorPaginationDTO';
 import { CreateAccessPoints } from './dto/create-access_points.dto';
 import { UpdateAccessPoints } from './dto/update-access_points.dto';
 import { AccessPointsEntity } from './entities/access_points.entity';
@@ -15,19 +15,20 @@ export class AccessPointsService {
     return point as AccessPointsEntity;
   }
 
-  async findAll(pagination: SensorPaginationDTO) {
+  async findAll(pagination: IPaginationSensor) {
     const points = await this.prisma.accessPoint.findMany({
       where: {
         AND: [
           {
+            userId: pagination.userId,
             name: {
               contains: `${pagination.name}`,
             },
-            sensor: {
-              contains: `${pagination.sensor || ''}`,
+            state: {
+              contains: `${pagination.state || ''}`,
             },
-            sensorID: {
-              contains: `${pagination.sensorID || ''}`,
+            serialID: {
+              contains: `${pagination.serialID || ''}`,
             },
           },
         ],
@@ -35,8 +36,8 @@ export class AccessPointsService {
       select: {
         id: true,
         name: true,
-        sensor: true,
-        sensorID: true,
+        state: true,
+        serialID: true,
         machineId: true,
         Machine: {
           select: {
@@ -55,11 +56,11 @@ export class AccessPointsService {
             name: {
               contains: `${pagination.name}`,
             },
-            sensor: {
-              contains: `${pagination.sensor || ''}`,
+            state: {
+              contains: `${pagination.state || ''}`,
             },
-            sensorID: {
-              contains: `${pagination.sensorID || ''}`,
+            serialID: {
+              contains: `${pagination.serialID || ''}`,
             },
           },
         ],
@@ -72,7 +73,7 @@ export class AccessPointsService {
     return { points, pagination };
   }
 
-  async findOne(id: string) {
+  async findOne(userId: string, id: string) {
     const product = await this.prisma.accessPoint.findUnique({
       where: { id },
       include: {
@@ -91,15 +92,31 @@ export class AccessPointsService {
         HttpStatus.NOT_FOUND,
       );
     }
+    if (product.userId !== userId) {
+      throw new HttpException(
+        AccessPointsHttpStatus.NOT_ALLOW,
+        HttpStatus.METHOD_NOT_ALLOWED,
+      );
+    }
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateAccessPoints) {
+  async update(
+    userId: string,
+    id: string,
+    updateProductDto: UpdateAccessPoints,
+  ) {
     const exist = await this.prisma.accessPoint.findUnique({ where: { id } });
     if (!exist) {
       throw new HttpException(
         AccessPointsHttpStatus.NOT_FOUND,
         HttpStatus.NOT_FOUND,
+      );
+    }
+    if (exist.userId !== userId) {
+      throw new HttpException(
+        AccessPointsHttpStatus.NOT_ALLOW,
+        HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
     const point = await this.prisma.accessPoint.update({
@@ -109,12 +126,18 @@ export class AccessPointsService {
     return point;
   }
 
-  async remove(id: string) {
+  async remove(userId: string, id: string) {
     const exist = await this.prisma.accessPoint.findUnique({ where: { id } });
     if (!exist) {
       throw new HttpException(
         AccessPointsHttpStatus.NOT_FOUND,
         HttpStatus.NOT_FOUND,
+      );
+    }
+    if (exist.userId !== userId) {
+      throw new HttpException(
+        AccessPointsHttpStatus.NOT_ALLOW,
+        HttpStatus.METHOD_NOT_ALLOWED,
       );
     }
     await this.prisma.accessPoint.delete({
