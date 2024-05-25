@@ -10,34 +10,36 @@ import {
   Put,
 } from '@nestjs/common';
 import { uuidDTO } from 'src/utils/dto';
-import { GetCurrentUserByIdAndPaginationSensor } from 'src/utils/guard/get-user-by-id-paginationSensor.decorator';
 import { GetCurrentUserById } from 'src/utils/guard/get-user-by-id.decorator';
-import { IPaginationSensor } from 'src/utils/sensorPaginationDTO';
-import { AccessPointsService } from './access_points.service';
-import { CreateAccessPointsBody } from './dto/create-access_points.dto';
-import { UpdateAccessPoints } from './dto/update-access_points.dto';
-import { AccessPointsEntity } from './entities/access_points.entity';
+import { IPaginationFees } from '../../utils/feesPaginationDTO';
+import { GetCurrentUserByIdAndPaginationFees } from '../../utils/guard/get-user-by-id-paginationFeesdecorator';
+import { CreateFeesBody } from './dto/create_fees.dto';
+import { UpdateAccessPoints } from './dto/update_fees.dto';
+import { FeesEntity } from './entities/fees.entity';
+import { FeesService } from './fees.service';
 
-@Controller('access_points')
-export class AccessPointsController {
-  constructor(private readonly accessPointService: AccessPointsService) {}
+@Controller('fees')
+export class FeesController {
+  constructor(private readonly accessPointService: FeesService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @GetCurrentUserById() id: string,
-    @Body() createProductDto: CreateAccessPointsBody,
-  ): Promise<AccessPointsEntity | null> {
-    return new AccessPointsEntity(
+    @Body() createProductDto: CreateFeesBody,
+  ): Promise<FeesEntity | null> {
+    return new FeesEntity(
       await this.accessPointService.create({ ...createProductDto, userId: id }),
     );
   }
 
   @Get()
-  findAll(
-    @GetCurrentUserByIdAndPaginationSensor() pagination: IPaginationSensor,
-  ) {
-    return this.accessPointService.findAll(pagination as IPaginationSensor);
+  findAll(@GetCurrentUserByIdAndPaginationFees() pagination: IPaginationFees) {
+    return this.accessPointService.findAll(pagination as IPaginationFees);
+  }
+  @Get('dashboard')
+  dashboardFees(@GetCurrentUserById() userId: string) {
+    return this.accessPointService.dashboardFees(userId);
   }
 
   @Get(':id')

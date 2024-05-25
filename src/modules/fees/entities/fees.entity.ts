@@ -1,16 +1,15 @@
 import { Exclude } from 'class-transformer';
+import { CreateFees } from '../dto/create_fees.dto';
 
-export class MachineEntity {
+export class FeesEntity extends CreateFees {
   id: string;
-  name: string;
-  type: string;
-  userId: string;
   @Exclude()
   created_at: Date;
   @Exclude()
   updated_at: Date;
 
-  constructor(partial: Partial<MachineEntity>) {
+  constructor(partial: Partial<FeesEntity>) {
+    super();
     Object.assign(this, partial);
   }
 }

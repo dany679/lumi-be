@@ -11,46 +11,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Machine {
-  id         String        @id @default(uuid())
-  name       String
-  type       String
-  created_at DateTime      @default(now())
-  updated_at DateTime      @updatedAt
-  AcessPoint AccessPoint[]
-  User       User          @relation(fields: [userId], references: [id])
-  userId     String // relation scalar field  (used in the `@relation` attribute above)
+model Fees {
+  id                     String   @id @default(uuid())
+  nClient                String
+  energiaEletricaWh      Float
+  energiaEletricaPrice   Float
+  energiaInjetadaWh      Float
+  energiaInjetadaPrice   Float
+  energiaCompensadaWh    Float
+  energiaCompensadaPrice Float
+  contribPublic          Float
+  total                  Float
+  referenceDate          DateTime
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+  User                   User     @relation(fields: [userId], references: [id])
+  userId                 String // relation scalar field  (used in the `@relation` attribute above)
 
-  @@map("machines")
-}
-
-model AccessPoint {
-  id         String   @id @default(uuid())
-  name       String
-  state      String
-  serialID   String   @unique
-  Machine    Machine  @relation(fields: [machineId], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  machineId  String
-  User       User     @relation(fields: [userId], references: [id])
-  userId     String // relation scalar field  (used in the `@relation` attribute above)
-
-  @@map("access_point")
+  @@map("fees")
 }
 
 model User {
-  id             String        @id @default(uuid())
+  id             String    @id @default(uuid())
   name           String
-  email          String        @unique
+  email          String    @unique
   emailVerified  DateTime?
   refreshToken   String?
-  provider       String        @default("EMAIL")
+  provider       String    @default("EMAIL")
   hashedPassword String?
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
-  Machine        Machine[]
-  AccessPoint    AccessPoint[]
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  Fees           Fees[]
 
   @@map("users")
 }

@@ -36,6 +36,7 @@ yarn
 ### Setup .env file
 
 como estou usando db prisma lembre de usar o generate
+caso reinicie o database os dados serão apagados , faça um novo login
 
 ```shell
 npx prisma generate
